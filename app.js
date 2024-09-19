@@ -1,8 +1,8 @@
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
-import { Chess } from './chess.js';
+const { Chess } = require('chess.js')
 
-var board = null
+var board = null 
 var game = new Chess()
 var $status = $('#status')
 var $fen = $('#fen')
@@ -82,3 +82,4 @@ var config = {
 board = Chessboard('myBoard', config)
 
 updateStatus()
+
