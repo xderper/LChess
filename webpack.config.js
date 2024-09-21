@@ -1,7 +1,8 @@
 const path = require('path')
 
 module.exports = {
-  entry: './app.js',
+  watch: true,  
+  entry: './src/game.js',
   mode: 'development',
   module: {
     rules: [
