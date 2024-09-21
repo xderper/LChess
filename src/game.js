@@ -24,7 +24,7 @@ function greySquare (square) {
 function onDragStart (source, piece) {
   // do not pick up pieces if the game is over
   if (game.game_over()){
-    console.log('over')
+    return false;
   }
 
   // or if it's not that side's turn
@@ -35,20 +35,34 @@ function onDragStart (source, piece) {
 }
 
 function onDrop (source, target) {
-  removeGreySquares()
+  removeGreySquares();
 
   // see if the move is legal
   var move = game.move({
     from: source,
     to: target,
     promotion: 'q' // NOTE: always promote to a queen for example simplicity
-  })
+  });
 
   // illegal move
-  if (move === null) return 'snapback'
+  if (move === null) return 'snapback';
+
+  // Проверяем на мат после хода
+  if (game.in_checkmate()) {
+    console.log('Игра окончена!');
+    if (game.in_checkmate()) {
+        console.log('Мат!');
+    } else if (game.in_stalemate()) {
+        console.log('Пат!');
+    } else if (game.in_draw()) {
+        console.log('Ничья!');
+    }
+  }
+
 }
 
 function onMouseoverSquare (square, piece) {
+
   // get list of possible moves for this square
   var moves = game.moves({
     square: square,
@@ -65,6 +79,7 @@ function onMouseoverSquare (square, piece) {
   for (var i = 0; i < moves.length; i++) {
     greySquare(moves[i].to)
   }
+
 }
 
 function onMouseoutSquare (square, piece) {
