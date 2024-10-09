@@ -1,10 +1,20 @@
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
 
+const socket = io();
+
 var board = null
 var game = new Chess()
 var whiteSquareGrey = '#a9a9a9'
 var blackSquareGrey = '#696969'
+
+
+socket.on('update_move', (fenData) =>{
+  game = new Chess(fenData);
+  board.position(game.fen())
+  // console.log(data.roomId)
+})
+
 
 function removeGreySquares () {
   $('#myBoard .square-55d63').css('background', '')
@@ -59,6 +69,8 @@ function onDrop (source, target) {
     }
   }
 
+  // Отправляем ход на сервер
+  socket.emit('move', game.fen());
 }
 
 function onMouseoverSquare (square, piece) {
@@ -68,7 +80,7 @@ function onMouseoverSquare (square, piece) {
     square: square,
     verbose: true
   })
-
+ 
   // exit if there are no moves available for this square
   if (moves.length === 0) return
 
@@ -100,3 +112,4 @@ var config = {
   onSnapEnd: onSnapEnd
 }
 board = Chessboard('myBoard', config)
+

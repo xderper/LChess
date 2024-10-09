@@ -1,8 +1,10 @@
+const socket = io();
+
 const send_btn = document.getElementById('send_btn');
 const code_input = document.getElementById('code_input');
 
+
 send_btn.addEventListener('click', async () => {
-    // console.log(code_input.value)
     const data = {
         code_text: code_input.value
     }
@@ -16,7 +18,9 @@ send_btn.addEventListener('click', async () => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                window.location.href = "../public/game.html";
+                const room = code_input.value;
+                window.location.href = '../public/game.html';
+                socket.emit('join_room', room);
             } else {
                 alert('Your code is incorrect!')
             }

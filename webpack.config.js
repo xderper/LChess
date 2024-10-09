@@ -1,19 +1,20 @@
 const path = require('path')
 
 module.exports = {
-  watch: true,
-  entry: './src/game.js',
-  mode: 'development',
-  module: {
-    rules: [
-      { test: /\.svg$/, use: 'svg-inline-loader' },
-      { test: /\.css$/, use: ['style-loader', 'css-loader'] },
-    ]
-  },
-  output: {
-    path: path.resolve(__dirname, 'webpack'),
-    filename: 'index.js'
-  }
+  
+    watch: true,
+    entry: {game: './src/game.js', login: './src/login.js'},
+    mode: 'development',
+    module: {
+      rules: [
+        { test: /\.svg$/, use: 'svg-inline-loader' },
+        { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+      ]
+    },
+    output: {
+      path: path.resolve(__dirname, 'webpack'),
+      filename: '[name].js'
+    }
 }
 // {
 //   watch: true,

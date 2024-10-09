@@ -1,11 +1,16 @@
 const express = require("express");
 const MongoClient = require("mongodb").MongoClient;
 const path = require("path");
-
+const chess = require("chess.js")
 
 const url = "mongodb://localhost:27017/flaindb";
+
 const app = express();
 const jsonParser = express.json();
+
+
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
 app.use(express.static('.'));
 
@@ -20,17 +25,35 @@ app.get('*', (req, res) => {
     res.status(403).send('Access denied');
 });
 
+
+
+
+io.on('connection', (socket) => {
+    // Handle player connections and room assignments here
+    socket.on('join_room', (roomId) => {
+        socket.join(roomId);
+    });
+
+    // Handle game updates and broadcasts to clients in the same room
+    socket.on('move', (fen) => {
+        console.log('+')
+        io.emit('update_move', fen);
+    });
+    // Handle disconnection
+    // socket.on('disconnect', () => {
+    // });
+});
+
+
 async function connectToDatabase() {
     try {
         client = new MongoClient(url);
         await client.connect();
-        console.log('Connected to database');
     } catch (err) {
         console.error(err);
     }
 }
 connectToDatabase();
-
 
 app.post('/login/game/add', jsonParser, async (req, res) => {
     const data = req.body;
@@ -38,11 +61,13 @@ app.post('/login/game/add', jsonParser, async (req, res) => {
         const db = client.db('login_game');
         const collection = db.collection('codes');
         const result = await collection.insertOne(data);
-        res.send({ message: 'Data added successfully' });
+
     } catch (err) {
         console.error(err);
     }
 });
+
+
 
 
 app.post('/login/game/check', jsonParser, async (req, res) => {
@@ -51,9 +76,9 @@ app.post('/login/game/check', jsonParser, async (req, res) => {
         const db = client.db('login_game');
         const collection = db.collection('codes');
         const codes = await collection.find().toArray();
-        for (let i=0; i<codes.length; i++){
-            if (codes[i].code_text === data.code_text){
-                res.json({success: true});
+        for (let i = 0; i < codes.length; i++) {
+            if (codes[i].code_text === data.code_text) {
+                res.json({ success: true });
             }
         }
     } catch (err) {
@@ -68,7 +93,7 @@ app.post('/login/game/check', jsonParser, async (req, res) => {
 
 
 // Запускаем сервер
-app.listen(3000, function () {
+server.listen(3000, function () {
     console.log('Сервер запущен на порту 3000');
 });
 
