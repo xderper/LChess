@@ -8,11 +8,13 @@ var game = new Chess()
 var whiteSquareGrey = '#a9a9a9'
 var blackSquareGrey = '#696969'
 
+const hash= window.location.hash.substring(1).split('&');
+const room = hash[0].split('=')[1];
+socket.emit('join_room', room);
 
 socket.on('update_move', (fenData) =>{
   game = new Chess(fenData);
   board.position(game.fen())
-  // console.log(data.roomId)
 })
 
 

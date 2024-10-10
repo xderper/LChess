@@ -18,9 +18,8 @@ send_btn.addEventListener('click', async () => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                const room = code_input.value;
-                window.location.href = '../public/game.html';
-                socket.emit('join_room', room);
+                room = code_input.value;
+                window.location.href = '../public/game.html#roomId=' + encodeURIComponent(room);
             } else {
                 alert('Your code is incorrect!')
             }

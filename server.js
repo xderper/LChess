@@ -29,19 +29,15 @@ app.get('*', (req, res) => {
 
 
 io.on('connection', (socket) => {
-    // Handle player connections and room assignments here
     socket.on('join_room', (roomId) => {
         socket.join(roomId);
     });
 
-    // Handle game updates and broadcasts to clients in the same room
     socket.on('move', (fen) => {
-        console.log('+')
-        io.emit('update_move', fen);
+        const roomId = Array.from(socket.rooms)[1];
+        io.to(roomId).emit('update_move', fen);
     });
-    // Handle disconnection
-    // socket.on('disconnect', () => {
-    // });
+
 });
 
 
@@ -66,7 +62,6 @@ app.post('/login/game/add', jsonParser, async (req, res) => {
         console.error(err);
     }
 });
-
 
 
 
